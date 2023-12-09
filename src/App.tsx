@@ -15,7 +15,7 @@ const App = () => {
 
   return (
     <div>
-      <img src="/lalaland.png" alt="Lala" />
+      <img src="https://lalaland.chat/lalaland.png" alt="Lala" />
       <h1>Lala Companion</h1>
       <p>
         3D personified desktop assistants, tuned for you, powered by AI vision
