@@ -2,6 +2,7 @@ import React, { useCallback, useState } from "react";
 
 const App = () => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
+  const [isOverlayFrameActive, setIsOverlayFrameActive] = useState(false);
 
   const onOpenOverlay = useCallback(() => {
     (window as any).electronAPI.openOverlay();
@@ -40,6 +41,35 @@ const App = () => {
       >
         {isOverlayOpen ? "Close" : "Open"} Overlay
       </button>
+      <br />
+      <br />
+      {isOverlayOpen && (
+        <button
+          onClick={
+            isOverlayFrameActive
+              ? () => {
+                  (window as any).electronAPI.closeOverlayFrame();
+                  setIsOverlayFrameActive(false);
+                }
+              : () => {
+                  (window as any).electronAPI.openOverlayFrame();
+                  setIsOverlayFrameActive(true);
+                }
+          }
+          type="button"
+          style={{
+            backgroundColor: isOverlayFrameActive ? "blue" : "orange",
+            color: "white",
+            padding: "10px",
+            borderRadius: "5px",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "20px",
+          }}
+        >
+          {isOverlayFrameActive ? "Close" : "Open"} Frame
+        </button>
+      )}
     </div>
   );
 };

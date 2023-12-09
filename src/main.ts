@@ -28,7 +28,7 @@ const createMainWindow = () => {
   }
 };
 
-const createOverlayWindow = () => {
+const createOverlayWindow = (withFrame: boolean) => {
   const display = screen.getPrimaryDisplay();
   const { width, height } = display.bounds;
 
@@ -40,7 +40,7 @@ const createOverlayWindow = () => {
     width: 400,
     alwaysOnTop: true,
     transparent: true,
-    frame: true,
+    frame: withFrame,
     x: width,
     y: height,
   });
@@ -60,12 +60,24 @@ app.on("ready", () => {
   createMainWindow();
 
   ipcMain.on("open-overlay", (event, title) => {
-    createOverlayWindow();
+    createOverlayWindow(false);
   });
 
   ipcMain.on("close-overlay", (event, title) => {
     overlayWindow?.close();
     overlayWindow = null;
+  });
+
+  ipcMain.on("open-overlay-frame", (event, title) => {
+    overlayWindow?.close();
+    overlayWindow = null;
+    createOverlayWindow(true);
+  });
+
+  ipcMain.on("close-overlay-frame", (event, title) => {
+    overlayWindow?.close();
+    overlayWindow = null;
+    createOverlayWindow(false);
   });
 });
 
