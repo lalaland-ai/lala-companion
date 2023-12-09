@@ -55,10 +55,7 @@ const createOverlayWindow = () => {
     overlayWindow.loadURL(OVERLAY_WINDOW_VITE_DEV_SERVER_URL);
   } else {
     overlayWindow.loadFile(
-      path.join(
-        __dirname,
-        `../renderer/${OVERLAY_WINDOW_VITE_NAME}/overlay/index.html`
-      )
+      path.join(__dirname, `../renderer/${OVERLAY_WINDOW_VITE_NAME}/index.html`)
     );
   }
 };
