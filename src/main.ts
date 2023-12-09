@@ -40,12 +40,11 @@ const createOverlayWindow = () => {
     width: 400,
     alwaysOnTop: true,
     transparent: true,
-    frame: false,
+    frame: true,
     x: width,
     y: height,
   });
 
-  overlayWindow.setIgnoreMouseEvents(true);
   overlayWindow.setFocusable(false);
 
   if (OVERLAY_WINDOW_VITE_DEV_SERVER_URL) {

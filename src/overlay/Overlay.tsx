@@ -1,9 +1,13 @@
 import React from "react";
+import VRMCompanion from "../components/VRMCompanion";
 
 const Overlay = () => {
   return (
-    <div>
-      <img src="https://lalaland.chat/lalaland.png" alt="Lala" />
+    <div style={{
+      height: "100%",
+      width: "100%"
+    }}>
+      <VRMCompanion virtualText="Hello World!" voiceUrl="" />
     </div>
   );
 };

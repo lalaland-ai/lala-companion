@@ -40,10 +40,14 @@
     "typescript": "~4.5.4"
   },
   "dependencies": {
+    "@pixiv/three-vrm": "^2.0.7",
+    "@react-three/drei": "^9.90.2",
+    "@react-three/fiber": "^8.15.12",
     "dotenv": "^16.3.1",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "three": "^0.159.0",
     "update-electron-app": "^3.0.0"
   }
 }

@@ -14,7 +14,11 @@ const App = () => {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        padding: "2rem",
+      }}
+    >
       <img src="https://lalaland.chat/lalaland.png" alt="Lala" />
       <h1>Lala Companion</h1>
       <p>
