@@ -5,7 +5,27 @@ import { contextBridge, ipcRenderer } from "electron";
 
 contextBridge.exposeInMainWorld("electronAPI", {
   openOverlay: () => ipcRenderer.send("open-overlay"),
+
   closeOverlay: () => ipcRenderer.send("close-overlay"),
+
   openOverlayFrame: () => ipcRenderer.send("open-overlay-frame"),
+
   closeOverlayFrame: () => ipcRenderer.send("close-overlay-frame"),
+
+  sendPrompt: (prompt: string) => ipcRenderer.send("send-prompt", prompt),
+
+  toggleHotMic: (isActive: boolean) =>
+    ipcRenderer.send("toggle-hotmic", isActive),
+
+  onPromptSent: (callback: (prompt: string) => void) => {
+    ipcRenderer.on("prompt-sent", (event, prompt) => {
+      callback(prompt);
+    });
+  },
+
+  onHotMicToggled: (callback: (isActive: boolean) => void) => {
+    ipcRenderer.on("hotmic-toggled", (event, isActive) => {
+      callback(isActive);
+    });
+  },
 });

@@ -2,10 +2,12 @@ import {
   Box,
   Button,
   Container,
+  FormControlLabel,
   IconButton,
   InputBase,
   Paper,
   Stack,
+  Switch,
   ThemeProvider,
   Typography,
 } from "@mui/material";
@@ -20,6 +22,7 @@ const App = () => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isOverlayFrameActive, setIsOverlayFrameActive] = useState(false);
   const [prompt, setPrompt] = useState<string>("");
+  const [isHotMicActive, setIsHotMicActive] = useState<boolean>(false);
 
   const onOpenOverlay = useCallback(() => {
     (window as any).electronAPI.openOverlay();
@@ -35,9 +38,15 @@ const App = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       console.log("prompt", prompt);
+      (window as any).electronAPI.sendPrompt(prompt);
     },
     [prompt]
   );
+
+  const onToggleHotMic = useCallback(() => {
+    setIsHotMicActive(!isHotMicActive);
+    (window as any).electronAPI.toggleHotMic(!isHotMicActive);
+  }, [isHotMicActive]);
 
   return (
     <Container maxWidth="md" sx={{ p: 1 }}>
@@ -108,6 +117,13 @@ const App = () => {
                 <SendIcon />
               </IconButton>
             </Paper>
+
+            <FormControlLabel
+              control={
+                <Switch value={isHotMicActive} onChange={onToggleHotMic} />
+              }
+              label="Always on microphone"
+            />
           </>
         )}
       </Stack>

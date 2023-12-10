@@ -6,7 +6,7 @@ if (require("electron-squirrel-startup")) {
   app.quit();
 }
 
-let overlayWindow: BrowserWindow | null = null;
+let overlayWindow: BrowserWindow = null;
 
 const createMainWindow = () => {
   const mainWindow = new BrowserWindow({
@@ -78,6 +78,14 @@ app.on("ready", () => {
     overlayWindow?.close();
     overlayWindow = null;
     createOverlayWindow(false);
+  });
+
+  ipcMain.on("send-prompt", (event, prompt) => {
+    overlayWindow?.webContents.send("prompt-sent", prompt);
+  });
+
+  ipcMain.on("toggle-hotmic", (event, isActive) => {
+    overlayWindow?.webContents.send("hotmic-toggled", isActive);
   });
 });
 

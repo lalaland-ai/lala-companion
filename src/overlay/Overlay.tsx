@@ -9,6 +9,7 @@ const Overlay = () => {
   const [voiceUrl, setVoiceUrl] = useState<string>("");
   const [recentResponse, setRecentResponse] = useState<string>("");
   const [isLalaSpeaking, setIsLalaSpeaking] = useState<boolean>(false);
+  const [isHotMicActive, setIsHotMicActive] = useState<boolean>(false);
 
   const getVoiceAudio = useCallback(async (text: string) => {
     try {
@@ -53,6 +54,20 @@ const Overlay = () => {
       role: "user",
       content:
         "Your name is Lala. You are a cute, smart, Anime girl AI companion inside the user's computer. Like Cortana from Halo. Greet the user on first message. Tell jokes, teach them, or just hangout. Keep it under 500 characters. Do not use emoijis and do not bracket your response with quotes.",
+    });
+  }, []);
+
+  useEffect(() => {
+    (window as any).electronAPI?.onHotMicToggled((isActive: boolean) => {
+      setIsHotMicActive(isActive);
+    });
+
+    (window as any).electronAPI?.onPromptSent((prompt: string) => {
+      console.log("prompt", prompt);
+      append({
+        role: "user",
+        content: prompt,
+      });
     });
   }, []);
 
@@ -132,7 +147,10 @@ const Overlay = () => {
         }
       });
     };
-    main();
+
+    if (isHotMicActive) {
+      main();
+    }
 
     return () => {
       stream?.getTracks().forEach((track) => track.stop());
@@ -142,7 +160,7 @@ const Overlay = () => {
       isUserSpeaking = false;
       isLoading = false;
     };
-  }, [isLalaSpeaking]);
+  }, [isLalaSpeaking, isHotMicActive]);
 
   return (
     <div
