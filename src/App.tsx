@@ -1,8 +1,25 @@
+import {
+  Box,
+  Button,
+  Container,
+  IconButton,
+  InputBase,
+  Paper,
+  Stack,
+  ThemeProvider,
+  Typography,
+} from "@mui/material";
 import React, { useCallback, useState } from "react";
+import { theme } from "./theme";
+import CssBaseline from "@mui/material/CssBaseline";
+import TabUnselectedIcon from "@mui/icons-material/TabUnselected";
+import WebAssetOffIcon from "@mui/icons-material/WebAssetOff";
+import SendIcon from "@mui/icons-material/Send";
 
 const App = () => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isOverlayFrameActive, setIsOverlayFrameActive] = useState(false);
+  const [prompt, setPrompt] = useState<string>("");
 
   const onOpenOverlay = useCallback(() => {
     (window as any).electronAPI.openOverlay();
@@ -14,68 +31,98 @@ const App = () => {
     setIsOverlayOpen(false);
   }, []);
 
+  const onPromptSubmit = useCallback(
+    (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      console.log("prompt", prompt);
+    },
+    [prompt]
+  );
+
   return (
-    <div
-      style={{
-        padding: "2rem",
-      }}
-    >
-      <img src="https://lalaland.chat/lalaland.png" alt="Lala" />
-      <h1>Lala Companion</h1>
-      <p>
+    <Container maxWidth="md" sx={{ p: 1 }}>
+      <Stack alignItems="center" my={2}>
+        <img
+          src="https://lalaland.chat/lalaland.png"
+          alt="Lala"
+          style={{
+            width: "50%",
+            maxWidth: "18rem",
+          }}
+        />
+      </Stack>
+
+      <Typography variant="h4" gutterBottom>
+        Lala Companion
+      </Typography>
+
+      <Typography variant="body1">
         3D personified desktop assistants, tuned for you, powered by AI vision
         and voice
-      </p>
-      <button
-        onClick={isOverlayOpen ? onCloseOverlay : onOpenOverlay}
-        type="button"
-        style={{
-          backgroundColor: isOverlayOpen ? "red" : "green",
-          color: "white",
-          padding: "10px",
-          borderRadius: "5px",
-          border: "none",
-          cursor: "pointer",
-          fontSize: "20px",
-        }}
-      >
-        {isOverlayOpen ? "Close" : "Open"} Overlay
-      </button>
-      <br />
-      <br />
-      {isOverlayOpen && (
-        <button
-          onClick={
-            isOverlayFrameActive
-              ? () => {
-                  (window as any).electronAPI.closeOverlayFrame();
-                  setIsOverlayFrameActive(false);
-                }
-              : () => {
-                  (window as any).electronAPI.openOverlayFrame();
-                  setIsOverlayFrameActive(true);
-                }
-          }
-          type="button"
-          style={{
-            backgroundColor: isOverlayFrameActive ? "blue" : "orange",
-            color: "white",
-            padding: "10px",
-            borderRadius: "5px",
-            border: "none",
-            cursor: "pointer",
-            fontSize: "20px",
-          }}
+      </Typography>
+
+      <Stack spacing={2} sx={{ mt: 3 }}>
+        <Button
+          onClick={isOverlayOpen ? onCloseOverlay : onOpenOverlay}
+          variant={isOverlayOpen ? "outlined" : "contained"}
+          endIcon={isOverlayOpen ? <WebAssetOffIcon /> : <TabUnselectedIcon />}
         >
-          {isOverlayFrameActive ? "Close" : "Open"} Frame
-        </button>
-      )}
-    </div>
+          {isOverlayOpen ? "Close" : "Open"} Overlay
+        </Button>
+
+        {isOverlayOpen && (
+          <>
+            <Button
+              onClick={
+                isOverlayFrameActive
+                  ? () => {
+                      (window as any).electronAPI.closeOverlayFrame();
+                      setIsOverlayFrameActive(false);
+                    }
+                  : () => {
+                      (window as any).electronAPI.openOverlayFrame();
+                      setIsOverlayFrameActive(true);
+                    }
+              }
+              variant={isOverlayFrameActive ? "outlined" : "contained"}
+            >
+              {isOverlayFrameActive ? "Close" : "Open"} Frame
+            </Button>
+
+            <Paper
+              component="form"
+              onSubmit={onPromptSubmit}
+              sx={{
+                p: "0.25rem 0.5rem",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <InputBase
+                sx={{ ml: 1, flex: 1 }}
+                placeholder="Prompt"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+              />
+              <IconButton type="button" sx={{ p: 1 }}>
+                <SendIcon />
+              </IconButton>
+            </Paper>
+          </>
+        )}
+      </Stack>
+    </Container>
   );
 };
 
 const AppLayout = () => {
-  return <App />;
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box id="background-image" />
+      <App />
+    </ThemeProvider>
+  );
 };
 
 export default AppLayout;

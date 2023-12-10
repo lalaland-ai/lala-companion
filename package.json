@@ -41,6 +41,10 @@
     "typescript": "~4.5.4"
   },
   "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.19",
+    "@mui/material": "^5.14.20",
     "@pixiv/three-vrm": "^2.0.7",
     "@react-three/drei": "^9.90.2",
     "@react-three/fiber": "^8.15.12",
