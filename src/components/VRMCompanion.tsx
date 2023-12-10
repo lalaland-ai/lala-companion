@@ -240,9 +240,11 @@ const VrmCompanion = ({
             <Text
               color="white"
               anchorX={"center"}
-              anchorY={-0.6}
-              fontSize={0.04}
-              maxWidth={1.5}
+              anchorY={-0.9}
+              fontSize={0.05}
+              outlineColor={"black"}
+              outlineWidth={0.004}
+              maxWidth={1}
               ref={textRef}
             >
               {virtualText}

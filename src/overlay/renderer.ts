@@ -34,5 +34,5 @@ console.log(
   "👋 This message is being logged by 'overlay/renderer.ts', included via Vite"
 );
 
-const root = createRoot(document.getElementById("root"));
+const root = createRoot(document.getElementById("overlay-root"));
 root.render(Overlay());

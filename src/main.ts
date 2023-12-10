@@ -36,8 +36,8 @@ const createOverlayWindow = (withFrame: boolean) => {
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
     },
-    height: 400,
-    width: 400,
+    height: 800,
+    width: 500,
     alwaysOnTop: true,
     transparent: true,
     frame: withFrame,

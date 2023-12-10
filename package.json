@@ -1,7 +1,7 @@
 {
   "name": "lala-companion",
   "productName": "lala-companion",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "3D personified desktop assistants, tuned for you, powered by AI vision and voice.",
   "main": ".vite/build/main.js",
   "scripts": {
@@ -43,6 +43,7 @@
     "@pixiv/three-vrm": "^2.0.7",
     "@react-three/drei": "^9.90.2",
     "@react-three/fiber": "^8.15.12",
+    "ai": "^2.2.28",
     "dotenv": "^16.3.1",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
