@@ -48,12 +48,16 @@ interface VrmCompanionProps {
   virtualText: string;
   voiceUrl: string;
   audioRef?: MutableRefObject<HTMLAudioElement>;
+  onSpeakStart?: () => void;
+  onSpeakEnd?: () => void;
 }
 
 const VrmCompanion = ({
   virtualText,
   voiceUrl,
   audioRef,
+  onSpeakStart,
+  onSpeakEnd,
 }: VrmCompanionProps) => {
   const [gltf, setGltf] = useState(null);
   const [animationMixer, setAnimationMixer] = useState<AnimationMixer>(null);
@@ -199,6 +203,7 @@ const VrmCompanion = ({
   useEffect(() => {
     const main = async () => {
       if (voiceUrl) {
+        onSpeakStart?.();
         audioRef.current.src = voiceUrl;
         audioRef.current.play();
 
@@ -222,6 +227,7 @@ const VrmCompanion = ({
         lipsAction.play();
 
         audioRef.current.onended = async () => {
+          onSpeakEnd?.();
           animationMixer.clipAction(talkClip).fadeOut(2);
           lipsAction.fadeOut(1);
           const randomIdle = getRandomAnimation("idle");
@@ -263,7 +269,7 @@ const VrmCompanion = ({
   );
 };
 
-const Scene = ({ virtualText, voiceUrl }: VrmCompanionProps) => {
+const Scene = ({ virtualText, voiceUrl, onSpeakStart, onSpeakEnd }: VrmCompanionProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   return (
@@ -287,6 +293,8 @@ const Scene = ({ virtualText, voiceUrl }: VrmCompanionProps) => {
           virtualText={virtualText}
           voiceUrl={voiceUrl}
           audioRef={audioRef}
+          onSpeakStart={onSpeakStart}
+          onSpeakEnd={onSpeakEnd}
         />
       </Canvas>
       <audio autoPlay ref={audioRef} src={""} />
