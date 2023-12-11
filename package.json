@@ -30,6 +30,7 @@
     "@electron-forge/plugin-auto-unpack-natives": "^7.2.0",
     "@electron-forge/plugin-vite": "^7.2.0",
     "@electron-forge/publisher-github": "^7.2.0",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@types/hark": "^1.2.5",
     "@types/react-dom": "^18.2.17",
     "@typescript-eslint/eslint-plugin": "^6.13.2",
@@ -45,6 +46,7 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.19",
     "@mui/material": "^5.14.20",
+    "@nut-tree/nut-js": "^3.1.2",
     "@pixiv/three-vrm": "^2.0.7",
     "@react-three/drei": "^9.91.0",
     "@react-three/fiber": "^8.15.12",
@@ -57,5 +59,11 @@
     "three": "^0.159.0",
     "update-electron-app": "^3.0.0",
     "wavesurfer.js": "^7.5.1"
+  },
+  "overrides": {
+    "jimp": "^0.22.8"
+  },
+  "peerDependencies": {
+    "sneer": "^1.0.1"
   }
 }

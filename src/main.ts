@@ -1,5 +1,6 @@
 import { app, BrowserWindow, ipcMain, screen } from "electron";
 import path from "path";
+import { screen as nutScreen } from "@nut-tree/nut-js/dist/index";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -86,6 +87,12 @@ app.on("ready", () => {
 
   ipcMain.on("toggle-hotmic", (event, isActive) => {
     overlayWindow?.webContents.send("hotmic-toggled", isActive);
+  });
+
+  ipcMain.on("get-screenshot", async (event) => {
+    const image = await nutScreen.capture("screenshot.png");
+    console.log(image);
+    overlayWindow?.webContents.send("screenshot", image);
   });
 });
 
