@@ -1,4 +1,10 @@
-import { app, BrowserWindow, ipcMain, screen } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  screen,
+  systemPreferences,
+} from "electron";
 import path from "path";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -58,6 +64,10 @@ const createOverlayWindow = (withFrame: boolean) => {
 
 app.on("ready", () => {
   createMainWindow();
+
+  if (process.platform === "darwin") {
+    systemPreferences.askForMediaAccess("microphone");
+  }
 
   ipcMain.on("open-overlay", (event, title) => {
     createOverlayWindow(false);
