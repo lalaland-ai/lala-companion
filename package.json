@@ -1,7 +1,7 @@
 {
   "name": "lala-companion",
   "productName": "lala-companion",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "3D personified desktop assistants, tuned for you, powered by AI vision and voice.",
   "main": ".webpack/main",
   "scripts": {

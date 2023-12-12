@@ -1,4 +1,11 @@
-import { app, BrowserWindow, ipcMain, screen, session } from "electron";
+import {
+  app,
+  BrowserWindow,
+  ipcMain,
+  screen,
+  systemPreferences,
+  session,
+} from "electron";
 import { screen as nutScreen, FileType } from "@nut-tree/nut-js/dist/index";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -66,6 +73,10 @@ app.on("ready", () => {
       },
     });
   });
+
+  if (process.platform === "darwin") {
+    systemPreferences.askForMediaAccess("microphone");
+  }
 
   ipcMain.on("open-overlay", (event, title) => {
     createOverlayWindow(false);
