@@ -6,7 +6,13 @@ import {
   systemPreferences,
   session,
 } from "electron";
-import { screen as nutScreen, FileType } from "@nut-tree/nut-js/dist/index";
+import {
+  screen as nutScreen,
+  FileType,
+  mouse,
+  Point,
+  straightTo,
+} from "@nut-tree/nut-js/dist/index";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -109,6 +115,7 @@ app.on("ready", () => {
 
   ipcMain.on("get-screenshot", async (event) => {
     const image = await nutScreen.capture("screenshot.png", FileType.PNG);
+    mouse.move(straightTo(new Point(0, 0)));
     overlayWindow?.webContents.send("screenshot", image);
   });
 });
