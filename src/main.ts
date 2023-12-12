@@ -4,8 +4,15 @@ import {
   ipcMain,
   screen,
   systemPreferences,
+  session,
 } from "electron";
-import path from "path";
+import {
+  screen as nutScreen,
+  FileType,
+  mouse,
+  Point,
+  straightTo,
+} from "@nut-tree/nut-js/dist/index";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -13,23 +20,18 @@ if (require("electron-squirrel-startup")) {
 }
 
 let overlayWindow: BrowserWindow = null;
+let mainWindow: BrowserWindow = null;
 
 const createMainWindow = () => {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
 
-  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL);
-  } else {
-    mainWindow.loadFile(
-      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`)
-    );
-  }
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
+  if (process.env.NODE_ENV === "development") {
     mainWindow.webContents.openDevTools();
   }
 };
@@ -40,7 +42,7 @@ const createOverlayWindow = (withFrame: boolean) => {
 
   overlayWindow = new BrowserWindow({
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
     height: 800,
     width: 500,
@@ -52,18 +54,31 @@ const createOverlayWindow = (withFrame: boolean) => {
   });
 
   overlayWindow.setFocusable(false);
+  overlayWindow.loadURL(OVERLAY_WINDOW_WEBPACK_ENTRY);
 
-  if (OVERLAY_WINDOW_VITE_DEV_SERVER_URL) {
-    overlayWindow.loadURL(OVERLAY_WINDOW_VITE_DEV_SERVER_URL);
-  } else {
-    overlayWindow.loadFile(
-      path.join(__dirname, `../renderer/${OVERLAY_WINDOW_VITE_NAME}/index.html`)
-    );
-  }
+  // if (process.env.NODE_ENV === "development") {
+  //   overlayWindow.webContents.openDevTools();
+  // }
 };
 
 app.on("ready", () => {
   createMainWindow();
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    callback({
+      responseHeaders: {
+        ...details.responseHeaders,
+        "Content-Security-Policy": [
+          "default-src 'self' 'unsafe-eval' 'unsafe-inline' https://lalaland.chat https://fonts.gstatic.com file: data: blob: filesystem:",
+          "script-src 'self' 'unsafe-eval' file: data: blob: filesystem:",
+          "worker-src 'self' 'unsafe-eval' file: data: blob: filesystem:",
+          "style-src 'self' 'unsafe-inline'",
+          "img-src 'self' https://lalaland.chat data:",
+          "connect-src 'self' https://lalaland.chat https://fonts.gstatic.com file: data: blob: filesystem:",
+          "media-src 'self' https://lalaland.chat data: blob: filesystem:",
+        ],
+      },
+    });
+  });
 
   if (process.platform === "darwin") {
     systemPreferences.askForMediaAccess("microphone");
@@ -96,6 +111,12 @@ app.on("ready", () => {
 
   ipcMain.on("toggle-hotmic", (event, isActive) => {
     overlayWindow?.webContents.send("hotmic-toggled", isActive);
+  });
+
+  ipcMain.on("get-screenshot", async (event) => {
+    const image = await nutScreen.capture("screenshot.png", FileType.PNG);
+    mouse.move(straightTo(new Point(0, 0)));
+    overlayWindow?.webContents.send("screenshot", image);
   });
 });
 

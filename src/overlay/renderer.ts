@@ -31,7 +31,7 @@ import { createRoot } from "react-dom/client";
 import Overlay from "./Overlay";
 
 console.log(
-  "👋 This message is being logged by 'overlay/renderer.ts', included via Vite"
+  "👋 This message is being logged by 'overlay/renderer.ts', included via Webpack"
 );
 
 const root = createRoot(document.getElementById("overlay-root"));

@@ -28,4 +28,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
       callback(isActive);
     });
   },
+
+  getScreenshot: () => ipcRenderer.send("get-screenshot"),
+
+  onScreenshot: (callback: (image: string) => void) => {
+    ipcRenderer.on("screenshot", (event, image) => {
+      callback(image);
+    });
+  },
 });

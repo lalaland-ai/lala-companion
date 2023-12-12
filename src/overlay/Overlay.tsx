@@ -3,7 +3,7 @@ import VRMCompanion from "../components/VRMCompanion";
 import { useChat } from "../../node_modules/ai/react/dist/index";
 import hark from "hark";
 import WaveSurfer from "wavesurfer.js";
-import RecordPlugin from "wavesurfer.js/dist/plugins/record";
+import RecordPlugin from "wavesurfer.js/dist/plugins/record.js";
 
 const Overlay = () => {
   const [voiceUrl, setVoiceUrl] = useState<string>("");

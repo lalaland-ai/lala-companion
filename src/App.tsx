@@ -17,6 +17,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import TabUnselectedIcon from "@mui/icons-material/TabUnselected";
 import WebAssetOffIcon from "@mui/icons-material/WebAssetOff";
 import SendIcon from "@mui/icons-material/Send";
+import ScreenshotMonitorIcon from "@mui/icons-material/ScreenshotMonitor";
 
 const App = () => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
@@ -47,6 +48,11 @@ const App = () => {
     setIsHotMicActive(!isHotMicActive);
     (window as any).electronAPI.toggleHotMic(!isHotMicActive);
   }, [isHotMicActive]);
+
+  const getScreenshot = useCallback(async () => {
+    const screenshot = await (window as any).electronAPI.getScreenshot();
+    console.log("screenshot", screenshot);
+  }, []);
 
   return (
     <Container maxWidth="md" sx={{ p: 1 }}>
@@ -124,6 +130,14 @@ const App = () => {
               }
               label="Always on microphone"
             />
+
+            <Button
+              onClick={getScreenshot}
+              variant={"outlined"}
+              endIcon={<ScreenshotMonitorIcon />}
+            >
+              Screenshot
+            </Button>
           </>
         )}
       </Stack>
