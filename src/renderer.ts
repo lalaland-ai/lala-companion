@@ -31,7 +31,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 
 console.log(
-  "👋 This message is being logged by 'renderer.ts', included via Vite"
+  "👋 This message is being logged by 'renderer.ts', included via Webpack"
 );
 
 const root = createRoot(document.getElementById("root"));

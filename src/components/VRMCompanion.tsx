@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Text } from "@react-three/drei";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { VRM, VRMUtils, VRMLoaderPlugin } from "@pixiv/three-vrm";
 import {
   AnimationClip,
@@ -269,7 +269,12 @@ const VrmCompanion = ({
   );
 };
 
-const Scene = ({ virtualText, voiceUrl, onSpeakStart, onSpeakEnd }: VrmCompanionProps) => {
+const Scene = ({
+  virtualText,
+  voiceUrl,
+  onSpeakStart,
+  onSpeakEnd,
+}: VrmCompanionProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
   return (
