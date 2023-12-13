@@ -4,7 +4,7 @@
 
 Early access in-development.
 
-# Features
+## Features
 
 - 3D VRM react-three-fiber avatars.
 - Always on microphone, voice to voice AI conversations.
