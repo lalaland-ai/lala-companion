@@ -4,6 +4,14 @@
 
 Early access in-development.
 
+# Features
+
+- 3D VRM react-three-fiber avatars.
+- Always on microphone, voice to voice AI conversations.
+- Screen vision with GPT4-V. Self operating computer functions.
+- Install Lala Companion on Linux, Windows or Mac. 
+- Resizable transparent overlay frame, always on-top AI interface for desktops.
+
 ## Join Lalaland
 
 [Discord](https://discord.gg/ypgqHYpEWw) |
@@ -13,9 +21,9 @@ Early access in-development.
 
 ![image](https://github.com/lalaland-ai/lala-companion/assets/27584221/91a7a062-1d46-4bd7-90f2-f407a39a28d8)
 
-![Screenshot from 2023-12-10 15-57-24](https://github.com/lalaland-ai/lala-companion/assets/27584221/49f6da56-6c9d-430a-9991-75365a221651)
+![image](https://github.com/lalaland-ai/lala-companion/assets/27584221/a155d512-a953-4560-9290-1bc5b73992de)
 
-![Screenshot from 2023-12-09 17-03-28](https://github.com/lalaland-ai/lala-companion/assets/27584221/38e654d0-e157-4d57-8c6f-d0c374cf5f1e)
+https://github.com/lalaland-ai/lala-companion/assets/27584221/bdc2e66b-4bbb-4cf1-9802-43f234ed0196
 
 ## Dev Local Setup
 
@@ -32,12 +40,6 @@ The reason being, is its hard to build nice GUIs in an also fully transparent, c
 
 As a rule, no buttons or 2D layers go in the 3D overlay. Only threejs 3D. Vanilla UIs go in "main".
 It ruins the vibe to mix.
-
-The main lego blocks:
-
-1. The typical "main" process in Electron. Controls IPC to the "Overlay" and hosts the boring 2d settings stuff to configure the app.
-
-2. The "Overlay". Responsible for rendering the threejs scene and playing / recording audio. This where the magic happens. This by default is always transparent + borderless frame. It should be minimalistic, focused mostly on just the avatar 3d as to not clutter the user desktop space.
 
 Use Typescript.
 
