@@ -5,14 +5,15 @@ import {
   screen,
   systemPreferences,
   session,
+  desktopCapturer,
 } from "electron";
 import {
-  screen as nutScreen,
-  FileType,
+  keyboard,
   mouse,
   Point,
   straightTo,
 } from "@nut-tree/nut-js/dist/index";
+import { writeFile } from "fs";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -21,6 +22,7 @@ if (require("electron-squirrel-startup")) {
 
 let overlayWindow: BrowserWindow = null;
 let mainWindow: BrowserWindow = null;
+let currentPrompt = "";
 
 const createMainWindow = () => {
   mainWindow = new BrowserWindow({
@@ -36,10 +38,11 @@ const createMainWindow = () => {
   }
 };
 
-const createOverlayWindow = (withFrame: boolean) => {
-  const display = screen.getPrimaryDisplay();
-  const { width, height } = display.bounds;
-
+const createOverlayWindow = (
+  withFrame: boolean,
+  width: number,
+  height: number
+) => {
   overlayWindow = new BrowserWindow({
     webPreferences: {
       preload: OVERLAY_WINDOW_PRELOAD_WEBPACK_ENTRY,
@@ -62,6 +65,9 @@ const createOverlayWindow = (withFrame: boolean) => {
 };
 
 app.on("ready", () => {
+  const display = screen.getPrimaryDisplay();
+  const { width, height } = display.bounds;
+
   createMainWindow();
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
@@ -84,39 +90,82 @@ app.on("ready", () => {
     systemPreferences.askForMediaAccess("microphone");
   }
 
-  ipcMain.on("open-overlay", (event, title) => {
-    createOverlayWindow(false);
+  ipcMain.on("open-overlay", () => {
+    createOverlayWindow(false, width, height);
   });
 
-  ipcMain.on("close-overlay", (event, title) => {
+  ipcMain.on("close-overlay", () => {
     overlayWindow?.close();
     overlayWindow = null;
   });
 
-  ipcMain.on("open-overlay-frame", (event, title) => {
+  ipcMain.on("open-overlay-frame", () => {
     overlayWindow?.close();
     overlayWindow = null;
-    createOverlayWindow(true);
+    createOverlayWindow(true, width, height);
   });
 
-  ipcMain.on("close-overlay-frame", (event, title) => {
+  ipcMain.on("close-overlay-frame", () => {
     overlayWindow?.close();
     overlayWindow = null;
-    createOverlayWindow(false);
+    createOverlayWindow(false, width, height);
   });
 
-  ipcMain.on("send-prompt", (event, prompt) => {
+  ipcMain.on("send-prompt", (event, prompt: string) => {
     overlayWindow?.webContents.send("prompt-sent", prompt);
   });
 
-  ipcMain.on("toggle-hotmic", (event, isActive) => {
+  ipcMain.on("set-prompt", (event, prompt: string) => {
+    currentPrompt = prompt;
+  });
+
+  ipcMain.on("set-hotmic", (event, isActive: boolean) => {
     overlayWindow?.webContents.send("hotmic-toggled", isActive);
   });
 
-  ipcMain.on("get-screenshot", async (event) => {
-    const image = await nutScreen.capture("screenshot.png", FileType.PNG);
-    mouse.move(straightTo(new Point(0, 0)));
-    overlayWindow?.webContents.send("screenshot", image);
+  ipcMain.on("set-hotmic", (event, isActive: boolean) => {
+    overlayWindow?.webContents.send("hotmic-toggled", isActive);
+  });
+
+  ipcMain.on("click", async (event, { x, y }: { x: number; y: number }) => {
+    console.log(x, y);
+    await mouse.move(straightTo(new Point(x, y)));
+    await mouse.leftClick();
+  });
+
+  ipcMain.on("type", async (event, text: string) => {
+    await keyboard.type(text);
+  });
+
+  ipcMain.on("get-screenshot", async () => {
+    try {
+      const sources = await desktopCapturer.getSources({
+        types: ["screen"],
+        thumbnailSize: {
+          width,
+          height,
+        },
+      });
+
+      const png = sources[0].thumbnail.toPNG();
+      const base64 = png.toString("base64");
+
+      mainWindow?.webContents.send("screenshot", {
+        image: base64,
+        height,
+        width,
+        prompt: currentPrompt,
+      });
+
+      writeFile("screenshot.png", png, (err) => {
+        if (err) {
+          return console.log(err);
+        }
+        console.log("The file was saved!");
+      });
+    } catch (e) {
+      console.error(e);
+    }
   });
 });
 

@@ -11,19 +11,67 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import React, { useCallback, useState } from "react";
+import React, { FormEvent, useCallback, useEffect, useState } from "react";
 import { theme } from "./theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import TabUnselectedIcon from "@mui/icons-material/TabUnselected";
 import WebAssetOffIcon from "@mui/icons-material/WebAssetOff";
 import SendIcon from "@mui/icons-material/Send";
-import ScreenshotMonitorIcon from "@mui/icons-material/ScreenshotMonitor";
+import { useChat } from "../node_modules/ai/react/dist/index";
+import { OperationAction, makeOperationPrompt } from "./self-operate";
 
 const App = () => {
   const [isOverlayOpen, setIsOverlayOpen] = useState(false);
   const [isOverlayFrameActive, setIsOverlayFrameActive] = useState(false);
   const [prompt, setPrompt] = useState<string>("");
   const [isHotMicActive, setIsHotMicActive] = useState<boolean>(false);
+  const [isSelfOperateActive, setIsSelfOperateActive] =
+    useState<boolean>(false);
+  const [previousActions, setPreviousActions] = useState<string[]>([]);
+
+  const { append } = useChat({
+    api: "https://lalaland.chat/api/companion/chat",
+    body: {
+      username: "unknown",
+    },
+    id: "self-operate",
+    onFinish: async (data) => {
+      try {
+        console.log(data);
+        const action = data.content.split(" ")?.[0];
+        const args = data.content.substring(action.length + 1);
+
+        console.log(action, args);
+
+        if (action === OperationAction.CLICK) {
+          (window as any).electronAPI.sendPrompt(
+            "Your tasked with making a mouse click action on the user's computer. Say your working on it in a cute / funny way. Keep it short under 100 chars."
+          );
+
+          const cords = JSON.parse(args);
+          (window as any).electronAPI.click({
+            x: Number(cords.x),
+            y: Number(cords.y),
+          });
+        } else if (action === OperationAction.TYPE) {
+          (window as any).electronAPI.sendPrompt(
+            "Your tasked with making a keyboard type action on the user's computer. Say your working on it in a cute / funny way. Keep it short under 100 chars."
+          );
+
+          (window as any).electronAPI.type(args);
+        }
+        setPreviousActions((prev) => [...prev, data.content]);
+
+        if (data.content !== OperationAction.DONE) {
+          setTimeout(() => {
+            (window as any).electronAPI.getScreenshot();
+          }, 1000 * 10);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+  });
 
   const onOpenOverlay = useCallback(() => {
     (window as any).electronAPI.openOverlay();
@@ -39,19 +87,62 @@ const App = () => {
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       console.log("prompt", prompt);
+      if (isSelfOperateActive) {
+        (window as any).electronAPI.getScreenshot(prompt);
+      }
       (window as any).electronAPI.sendPrompt(prompt);
+      setPrompt("");
     },
-    [prompt]
+    [prompt, isSelfOperateActive]
   );
 
   const onToggleHotMic = useCallback(() => {
     setIsHotMicActive(!isHotMicActive);
-    (window as any).electronAPI.toggleHotMic(!isHotMicActive);
+    (window as any).electronAPI.setHotMic(!isHotMicActive);
   }, [isHotMicActive]);
 
-  const getScreenshot = useCallback(async () => {
-    const screenshot = await (window as any).electronAPI.getScreenshot();
-    console.log("screenshot", screenshot);
+  const onToggleSelfOperate = useCallback(() => {
+    setIsSelfOperateActive(!isSelfOperateActive);
+  }, [isSelfOperateActive]);
+
+  const onPromptChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPrompt(e.target.value);
+      (window as any).electronAPI.setPrompt(e.target.value);
+    },
+    []
+  );
+
+  useEffect(() => {
+    (window as any).electronAPI?.onScreenshot(
+      ({
+        image,
+        height,
+        width,
+        prompt,
+      }: {
+        image: string;
+        height: number;
+        width: number;
+        prompt: string;
+      }) => {
+        const operationPrompt = makeOperationPrompt(
+          prompt,
+          previousActions,
+          height,
+          width
+        );
+
+        append({
+          role: "user",
+          content: operationPrompt,
+          data: {
+            imageData: image,
+            username: "unknown",
+          },
+        });
+      }
+    );
   }, []);
 
   return (
@@ -117,9 +208,17 @@ const App = () => {
                 sx={{ ml: 1, flex: 1 }}
                 placeholder="Prompt"
                 value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+                onChange={onPromptChange}
               />
-              <IconButton type="button" sx={{ p: 1 }}>
+              <IconButton
+                type="button"
+                sx={{ p: 1 }}
+                onClick={() =>
+                  onPromptSubmit({
+                    preventDefault: () => {},
+                  } as FormEvent<HTMLFormElement>)
+                }
+              >
                 <SendIcon />
               </IconButton>
             </Paper>
@@ -131,13 +230,16 @@ const App = () => {
               label="Always on microphone"
             />
 
-            <Button
-              onClick={getScreenshot}
-              variant={"outlined"}
-              endIcon={<ScreenshotMonitorIcon />}
-            >
-              Screenshot
-            </Button>
+            <FormControlLabel
+              control={
+                <Switch
+                  value={isSelfOperateActive}
+                  onChange={onToggleSelfOperate}
+                  color="secondary"
+                />
+              }
+              label="Self operate computer"
+            />
           </>
         )}
       </Stack>

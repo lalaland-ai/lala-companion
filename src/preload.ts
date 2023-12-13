@@ -14,8 +14,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   sendPrompt: (prompt: string) => ipcRenderer.send("send-prompt", prompt),
 
-  toggleHotMic: (isActive: boolean) =>
-    ipcRenderer.send("toggle-hotmic", isActive),
+  setPrompt: (prompt: string) => ipcRenderer.send("set-prompt", prompt),
+
+  setHotMic: (isActive: boolean) => ipcRenderer.send("set-hotmic", isActive),
+
+  setSelfOperate: (isSelfOperate: boolean) =>
+    ipcRenderer.send("set-self-operate", isSelfOperate),
 
   onPromptSent: (callback: (prompt: string) => void) => {
     ipcRenderer.on("prompt-sent", (event, prompt) => {
@@ -31,9 +35,42 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   getScreenshot: () => ipcRenderer.send("get-screenshot"),
 
-  onScreenshot: (callback: (image: string) => void) => {
-    ipcRenderer.on("screenshot", (event, image) => {
-      callback(image);
-    });
+  click: ({ x, y }: { x: number; y: number }) =>
+    ipcRenderer.send("click", { x, y }),
+
+  type: (text: string) => ipcRenderer.send("type", text),
+
+  onScreenshot: (
+    callback: ({
+      image,
+      height,
+      width,
+      prompt,
+    }: {
+      image: string;
+      height: number;
+      width: number;
+      prompt: string;
+    }) => void
+  ) => {
+    ipcRenderer.on(
+      "screenshot",
+      (
+        event,
+        {
+          image,
+          height,
+          width,
+          prompt,
+        }: {
+          image: string;
+          height: number;
+          width: number;
+          prompt: string;
+        }
+      ) => {
+        callback({ image, height, width, prompt });
+      }
+    );
   },
 });
