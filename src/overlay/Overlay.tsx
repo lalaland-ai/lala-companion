@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from "react";
-import VRMCompanion from "../components/VRMCompanion";
 import { useChat } from "../../node_modules/ai/react/dist/index";
 import hark from "hark";
 import WaveSurfer from "wavesurfer.js";
 import RecordPlugin from "wavesurfer.js/dist/plugins/record.js";
+import Scene from "../Scene";
 
 const Overlay = () => {
   const [voiceUrl, setVoiceUrl] = useState<string>("");
@@ -169,7 +169,7 @@ const Overlay = () => {
         width: "100%",
       }}
     >
-      <VRMCompanion
+      <Scene
         virtualText={recentResponse}
         voiceUrl={voiceUrl}
         onSpeakStart={() => setIsLalaSpeaking(true)}
