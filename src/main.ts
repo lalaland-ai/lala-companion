@@ -74,12 +74,12 @@ app.on("ready", () => {
       responseHeaders: {
         ...details.responseHeaders,
         "Content-Security-Policy": [
-          "default-src 'self' 'unsafe-eval' 'unsafe-inline' https://lalaland.chat https://fonts.gstatic.com file: data: blob: filesystem:",
+          "default-src 'self' 'unsafe-eval' 'unsafe-inline' https://lalaland.chat https://fonts.gstatic.com https://cdn.jsdelivr.net file: data: blob: filesystem:",
           "script-src 'self' 'unsafe-eval' file: data: blob: filesystem:",
           "worker-src 'self' 'unsafe-eval' file: data: blob: filesystem:",
           "style-src 'self' 'unsafe-inline'",
           "img-src 'self' https://lalaland.chat data:",
-          "connect-src 'self' https://lalaland.chat https://fonts.gstatic.com file: data: blob: filesystem:",
+          "connect-src 'self' https://lalaland.chat https://fonts.gstatic.com https://cdn.jsdelivr.net file: data: blob: filesystem:",
           "media-src 'self' https://lalaland.chat data: blob: filesystem:",
         ],
       },
