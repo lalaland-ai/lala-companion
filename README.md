@@ -9,7 +9,7 @@ Early access in-development.
 - 3D VRM react-three-fiber avatars.
 - Always on microphone, voice to voice AI conversations.
 - Screen vision with GPT4-V. Self operating computer functions.
-- Install Lala Companion on Linux, Windows or Mac. 
+- Install Lala Companion on Linux, Windows or Mac.
 - Resizable transparent overlay frame, always on-top AI interface for desktops.
 
 ## Join Lalaland
@@ -27,10 +27,12 @@ https://github.com/lalaland-ai/lala-companion/assets/27584221/bdc2e66b-4bbb-4cf1
 
 ## Dev Local Setup
 
-```bash
-npm i --force
+Copy `.env.example` to `.env` and fill in the `OPENAI_API_KEY`.
 
-npm run start
+```bash
+npm i
+
+NODE_OPTIONS="--no-experimental-strip-types" npm run start
 ```
 
 ## Dev Notes
@@ -40,11 +42,3 @@ The reason being, is its hard to build nice GUIs in an also fully transparent, c
 
 As a rule, no buttons or 2D layers go in the 3D overlay. Only threejs 3D. Vanilla UIs go in "main".
 It ruins the vibe to mix.
-
-Use Typescript.
-
-AI Streaming is done with ai package from Vercel. useChat hook is good.
-
-We are hosting public AI APIs connected in source code from Lalaland company as a donation out of good faith, these will be subject to logins, rate limits and API keys soon.
-
-A local backend mode would also be nice, coming soon.

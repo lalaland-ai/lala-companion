@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useChat } from "../../node_modules/ai/react/dist/index";
+import { useChat } from "@ai-sdk/react";
 import hark from "hark";
 import WaveSurfer from "wavesurfer.js";
 import RecordPlugin from "wavesurfer.js/dist/plugins/record.js";
@@ -38,10 +38,7 @@ const Overlay = () => {
   }, []);
 
   const { append } = useChat({
-    api: "https://lalaland.chat/api/companion/chat",
-    body: {
-      username: "unknown",
-    },
+    api: "http://localhost:3001/api/chat",
     onFinish: async (data) => {
       console.log(data);
       setVoiceUrl(await getVoiceAudio(data.content));
@@ -50,10 +47,12 @@ const Overlay = () => {
   });
 
   useEffect(() => {
-    append({
-      role: "user",
-      content:
-        "Your name is Lala. You are a cute, smart, Anime girl AI companion inside the user's computer. Like Cortana from Halo. Greet the user on first message. Tell jokes, teach them, or just hangout. Keep it under 500 characters. Do not use emoijis and do not bracket your response with quotes.",
+    (window as any).electronAPI.generateText(
+      "Your name is Lala. You are a cute, smart, Anime girl AI companion inside the user's computer. Like Cortana from Halo. Greet the user on first message. Tell jokes, teach them, or just hangout. Keep it under 500 characters. Do not use emoijis and do not bracket your response with quotes."
+    );
+
+    (window as any).electronAPI?.onGeneratedText((text: string) => {
+      setRecentResponse(text);
     });
   }, []);
 
@@ -64,10 +63,7 @@ const Overlay = () => {
 
     (window as any).electronAPI?.onPromptSent((prompt: string) => {
       console.log("prompt", prompt);
-      append({
-        role: "user",
-        content: prompt,
-      });
+      (window as any).electronAPI.generateText(prompt);
     });
   }, []);
 
