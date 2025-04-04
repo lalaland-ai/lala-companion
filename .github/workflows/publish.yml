@@ -18,3 +18,4 @@ jobs:
       - run: npm run publish
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          NODE_OPTIONS: "--no-experimental-strip-types"
