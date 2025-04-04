@@ -2,7 +2,7 @@ import { VRM } from "@pixiv/three-vrm";
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { RapierRigidBody } from "@react-three/rapier";
-import React, { useRef, useEffect, MutableRefObject } from "react";
+import React, { useRef, useEffect, RefObject } from "react";
 import { Mesh } from "three";
 import { animations } from "./constants/animations";
 import VrmCompanion from "./components/VRMCompanion";
@@ -10,7 +10,7 @@ import VrmCompanion from "./components/VRMCompanion";
 interface SceneProps {
   virtualText: string;
   voiceUrl: string;
-  audioRef?: MutableRefObject<HTMLAudioElement>;
+  audioRef?: RefObject<HTMLAudioElement>;
   onSpeakStart?: () => void;
   onSpeakEnd?: () => void;
 }

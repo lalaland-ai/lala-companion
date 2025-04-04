@@ -65,4 +65,12 @@ contextBridge.exposeInMainWorld("electronAPI", {
       }
     );
   },
+
+  generateText: (prompt: string) => ipcRenderer.send("generate-text", prompt),
+
+  onGeneratedText: (callback: (text: string) => void) => {
+    ipcRenderer.on("generated-text", (event, text) => {
+      callback(text);
+    });
+  },
 });

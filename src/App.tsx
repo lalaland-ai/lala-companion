@@ -61,7 +61,7 @@ const App = () => {
     <Container maxWidth="md" sx={{ p: 1 }}>
       <Stack alignItems="center" my={2}>
         <img
-          src="https://lalaland.chat/lalaland.png"
+          src="./assets/images/lalaland.png"
           alt="Lala"
           style={{
             width: "50%",

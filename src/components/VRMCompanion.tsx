@@ -1,5 +1,5 @@
 import React, {
-  MutableRefObject,
+  RefObject,
   Suspense,
   forwardRef,
   useCallback,
@@ -47,8 +47,8 @@ export const emotions = {
 };
 
 interface VrmAvatarProps {
-  meshRef?: MutableRefObject<any>;
-  physicsRef?: MutableRefObject<any>;
+  meshRef?: RefObject<any>;
+  physicsRef?: RefObject<any>;
   vrmUrl: string;
   animations: Record<"greet" | "idle" | "talk" | "bored" | "walk", string[]>;
   scale: number[];
@@ -267,7 +267,7 @@ const VrmCompanion = forwardRef(
         loader.loadAsync(vrmUrl).then(async (gltf: GLTF) => {
           setPrevVrmUrl(vrmUrl);
           const vrm = gltf.userData.vrm as VRM;
-          VRMUtils.removeUnnecessaryJoints(vrm.scene);
+          VRMUtils.combineSkeletons(vrm.scene);
           VRMUtils.removeUnnecessaryVertices(vrm.scene);
 
           vrm.scene.traverse((obj) => {

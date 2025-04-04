@@ -8,6 +8,11 @@ import {
   desktopCapturer,
 } from "electron";
 import { writeFile } from "fs";
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -64,18 +69,19 @@ app.on("ready", () => {
 
   createMainWindow();
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    const csp =
+      "default-src 'self' 'unsafe-eval' 'unsafe-inline' https://lalaland.chat https://fonts.gstatic.com https://cdn.jsdelivr.net file: data: blob: filesystem:; " +
+      "connect-src 'self' https://lalaland.chat https://fonts.gstatic.com https://cdn.jsdelivr.net file: data: blob: filesystem:; " +
+      "script-src 'self' 'unsafe-eval' file: data: blob: filesystem:; " +
+      "style-src 'self' 'unsafe-inline'; " +
+      "img-src 'self' https://lalaland.chat data:; " +
+      "media-src 'self' https://lalaland.chat data: blob: filesystem:; " +
+      "worker-src 'self' 'unsafe-eval' file: data: blob: filesystem:";
+
     callback({
       responseHeaders: {
         ...details.responseHeaders,
-        "Content-Security-Policy": [
-          "default-src 'self' 'unsafe-eval' 'unsafe-inline' https://lalaland.chat https://fonts.gstatic.com https://cdn.jsdelivr.net file: data: blob: filesystem:",
-          "script-src 'self' 'unsafe-eval' file: data: blob: filesystem:",
-          "worker-src 'self' 'unsafe-eval' file: data: blob: filesystem:",
-          "style-src 'self' 'unsafe-inline'",
-          "img-src 'self' https://lalaland.chat data:",
-          "connect-src 'self' https://lalaland.chat https://fonts.gstatic.com https://cdn.jsdelivr.net file: data: blob: filesystem:",
-          "media-src 'self' https://lalaland.chat data: blob: filesystem:",
-        ],
+        "Content-Security-Policy": [csp],
       },
     });
   });
@@ -149,6 +155,37 @@ app.on("ready", () => {
       });
     } catch (e) {
       console.error(e);
+    }
+  });
+
+  const messages: {
+    role: "user" | "assistant";
+    content: string;
+  }[] = [];
+
+  ipcMain.on("generate-text", async (event, prompt: string) => {
+    try {
+      messages.push({
+        role: "user",
+        content: prompt,
+      });
+
+      const { text } = await generateText({
+        model: openai("gpt-4o"),
+        prompt: `Reply to the latest message in the conversation. The conversation is: ${messages
+          .map((message) => `${message.role}: ${message.content}`)
+          .join("\n")}`,
+      });
+
+      messages.push({
+        role: "assistant",
+        content: text,
+      });
+
+      overlayWindow?.webContents.send("generated-text", text);
+    } catch (e) {
+      console.error(e);
+      overlayWindow?.webContents.send("error", e);
     }
   });
 });
