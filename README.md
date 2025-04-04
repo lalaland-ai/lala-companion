@@ -28,9 +28,9 @@ https://github.com/lalaland-ai/lala-companion/assets/27584221/bdc2e66b-4bbb-4cf1
 ## Dev Local Setup
 
 ```bash
-npm i --force
+npm i
 
-npm run start
+NODE_OPTIONS="--no-experimental-strip-types" npm run start
 ```
 
 ## Dev Notes

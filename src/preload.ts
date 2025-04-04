@@ -18,9 +18,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   setHotMic: (isActive: boolean) => ipcRenderer.send("set-hotmic", isActive),
 
-  setSelfOperate: (isSelfOperate: boolean) =>
-    ipcRenderer.send("set-self-operate", isSelfOperate),
-
   onPromptSent: (callback: (prompt: string) => void) => {
     ipcRenderer.on("prompt-sent", (event, prompt) => {
       callback(prompt);
@@ -34,11 +31,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   },
 
   getScreenshot: () => ipcRenderer.send("get-screenshot"),
-
-  click: ({ x, y }: { x: number; y: number }) =>
-    ipcRenderer.send("click", { x, y }),
-
-  type: (text: string) => ipcRenderer.send("type", text),
 
   onScreenshot: (
     callback: ({

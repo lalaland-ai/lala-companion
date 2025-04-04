@@ -50,10 +50,7 @@ interface VrmAvatarProps {
   meshRef?: MutableRefObject<any>;
   physicsRef?: MutableRefObject<any>;
   vrmUrl: string;
-  animations: Record<
-    "greet" | "idle" | "talk" | "bored" | "walk" | "happy" | "angry" | "sad",
-    string[]
-  >;
+  animations: Record<"greet" | "idle" | "talk" | "bored" | "walk", string[]>;
   scale: number[];
   rotation?: number[];
   position?: number[];
@@ -104,8 +101,8 @@ const VrmCompanion = forwardRef(
     }, []);
 
     const rigidBodyRef = useRef<RapierRigidBody>(null);
-    const gltfRef = useRef<Mesh>();
-    const vrmRef = useRef<VRM>();
+    const gltfRef = useRef<Mesh>(null);
+    const vrmRef = useRef<VRM>(null);
     const virtualTextRef = useRef<Mesh>(null);
 
     // bind refs to props for external access

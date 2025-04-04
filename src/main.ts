@@ -7,12 +7,6 @@ import {
   session,
   desktopCapturer,
 } from "electron";
-import {
-  keyboard,
-  mouse,
-  Point,
-  straightTo,
-} from "@nut-tree/nut-js/dist/index";
 import { writeFile } from "fs";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -59,9 +53,9 @@ const createOverlayWindow = (
   overlayWindow.setFocusable(false);
   overlayWindow.loadURL(OVERLAY_WINDOW_WEBPACK_ENTRY);
 
-  // if (process.env.NODE_ENV === "development") {
-  //   overlayWindow.webContents.openDevTools();
-  // }
+  if (process.env.NODE_ENV === "development") {
+    overlayWindow.webContents.openDevTools();
+  }
 };
 
 app.on("ready", () => {
@@ -125,16 +119,6 @@ app.on("ready", () => {
 
   ipcMain.on("set-hotmic", (event, isActive: boolean) => {
     overlayWindow?.webContents.send("hotmic-toggled", isActive);
-  });
-
-  ipcMain.on("click", async (event, { x, y }: { x: number; y: number }) => {
-    console.log(x, y);
-    await mouse.move(straightTo(new Point(x, y)));
-    await mouse.leftClick();
-  });
-
-  ipcMain.on("type", async (event, text: string) => {
-    await keyboard.type(text);
   });
 
   ipcMain.on("get-screenshot", async () => {
